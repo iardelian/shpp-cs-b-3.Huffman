@@ -9,7 +9,6 @@ using namespace std;
 /*
  * Class of Huffman node tree
  */
-
 class Node{
 public:
     int number; //frequency of occurrence of symbol in the file
@@ -26,7 +25,7 @@ public:
         number = L->number + R->number; //the sum of two nodes values
     }
 
-    ~Node(){ // destructor
+    ~Node(){
         delete left;
         delete right;
     }
@@ -35,7 +34,6 @@ public:
 /*
  * Struct for sorting elements in the list
  */
-
 struct MyCompare{
     bool operator()(Node* left, Node* right){ //parameters overload
         return left->number < right->number;
@@ -43,16 +41,13 @@ struct MyCompare{
 };
 
 map <char, vector <bool> > symbolCodeTable; //table with code and symbol association (table for coding)
-
 Node *treeRoot; //root of a binary tree
-
 vector <bool> code; //binary vector
 
 /*
  * Associate a symbol with its code starting from the root
  * and passing through the tree
  */
-
 void symbolCodeAssociation(Node *root){
     if (root->left != NULL) {
         code.push_back(0); //put zero in the vector
@@ -71,7 +66,6 @@ void symbolCodeAssociation(Node *root){
 /*
  * Build a code tree for characters of the text according to the Huffman's algorithm
  */
-
 void buildTree(const map <char, int> &symbolFrequencyAssociation){
     list <Node*> pointer; //list of pointers to the node
 
@@ -96,7 +90,7 @@ void buildTree(const map <char, int> &symbolFrequencyAssociation){
     }
     treeRoot = pointer.front(); //pointer to the root
 
-    code.clear();//
+    code.clear(); //free up memory
     symbolCodeTable.clear();
     symbolCodeAssociation(treeRoot); //creating a pair of character-code
 }
@@ -108,7 +102,6 @@ void archive(); // encoding function
 void dearchive(); // decoding function
 
 int main (){
-
     int choice;
     cout << "*-*-*-*-*-*-*-*_Huffman Archiver_*-*-*-*-*-*-* \n" << endl;
     cout << "    __ __ __ __\n   /           /|\n  /archive.huf/ |\n /__ __ __ __/ /|\n|__ __ __ __|/ /|\n|__ __ __ __|/ /\n|__ __ __ __|/\n" << endl;
@@ -157,8 +150,7 @@ void archive(){
     char size = symbolFrequencyAssociation.size();
     outputArchive.write(reinterpret_cast<char *>(&size), sizeof(size)); // the number of symbols
     // write symbols with the frequencies
-    for (map <char, int>::iterator iterator = symbolFrequencyAssociation.begin(); iterator != symbolFrequencyAssociation.end(); ++iterator)
-    {
+    for (map <char, int>::iterator iterator = symbolFrequencyAssociation.begin(); iterator != symbolFrequencyAssociation.end(); ++iterator){
         char first = iterator->first;
         int second = iterator->second;
         outputArchive.write(reinterpret_cast<char *>(&first), sizeof(char)); // typecast to char *
@@ -167,8 +159,8 @@ void archive(){
 
     int count = 0;
     char buf = 0;
-    while (true)
-    {
+    
+    while (true) {
         char byte = inputFile.get(); //get one byte
         if (inputFile.eof()) {
             break;
@@ -186,6 +178,7 @@ void archive(){
             }
         }
     }
+    
     if (count != 0) {
         outputArchive << buf; //put last, not full byte
     }
@@ -206,8 +199,7 @@ void dearchive(){
 
     inputArchive.read(reinterpret_cast<char *>(&size), sizeof(size)); // typecast to char *
     // read symbols with the frequencies
-    for (int i = 0; i < size; ++i)
-    {
+    for (int i = 0; i < size; ++i) {
         char first;
         int second;
         inputArchive.read(reinterpret_cast<char *>(&first), sizeof(char));
@@ -222,7 +214,7 @@ void dearchive(){
     char byte;
     byte = inputArchive.get(); //get byte
 
-    while(!inputArchive.eof()){
+    while (!inputArchive.eof()) {
         if (byte & (1 << (7-count))) { //check if it's 0 or 1
             pointer = pointer->right;
         } else {
